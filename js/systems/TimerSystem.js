@@ -7,13 +7,13 @@ export class TimerSystem {
         this.isRunning = false;
         this.hasEnded = false;
         
-        // Create PixiJS Text for the timer display
+        // PixiJS Text for the timer display
         this.timerText = new Text('2:00', {
             fontFamily: 'ArcadeFont',
             fontSize: 35,
-            fill: 0xffffff, // White color
+            fill: 0xffffff, 
             align: 'center',
-            stroke: 0x000000, // Black stroke for better visibility
+            stroke: 0x000000, 
             strokeThickness: 2
         });
         
@@ -25,9 +25,7 @@ export class TimerSystem {
         this.app.stage.addChild(this.timerText);
     }
     
-    /**
-     * Start the timer countdown
-     */
+    //Start the timer countdown
     start() {
         if (this.isRunning) return;
         this.isRunning = true;
@@ -37,30 +35,25 @@ export class TimerSystem {
         this.app.ticker.add(this.update, this);
     }
     
-    /**
-     * Stop the timer
-     */
+    // Stop the timer
     stop() {
         this.isRunning = false;
         this.app.ticker.remove(this.update, this);
     }
     
-    /**
-     * Reset the timer to 2:00
-     */
+    // reset the timer to initial value
     reset() {
         this.timeRemaining = 120;
         this.hasEnded = false;
         this.updateDisplay();
     }
     
-    /**
-     * Update the timer - called every frame
-     */
+
+    // Just Update the timer - called every frame
     update() {
         if (!this.isRunning) return;
         
-        // Decrease time by delta time (typically 0.016 for 60fps)
+        // Decrease time by delta time 
         this.timeRemaining -= this.app.ticker.deltaTime * 0.016;
         
         // Ensure time doesn't go below 0
@@ -79,9 +72,7 @@ export class TimerSystem {
         }
     }
     
-    /**
-     * Update the timer text display in MM:SS format
-     */
+    // Update the timer text display in MM:SS format
     updateDisplay() {
         const minutes = Math.floor(this.timeRemaining / 60);
         const seconds = Math.floor(this.timeRemaining % 60);
@@ -92,23 +83,17 @@ export class TimerSystem {
         this.timerText.text = timeString;
     }
     
-    /**
-     * Get the remaining time in seconds
-     */
+    //Get the remaining time in seconds
     getTimeRemaining() {
         return this.timeRemaining;
     }
     
-    /**
-     * Check if timer has ended
-     */
+    // Check if timer has ended
     isTimerEnded() {
         return this.hasEnded;
     }
     
-    /**
-     * Destroy the timer and remove it from the stage
-     */
+    // Destroy the timer and remove it from the stage
     destroy() {
         this.stop();
         this.app.stage.removeChild(this.timerText);

@@ -1,10 +1,8 @@
-// Handles ShuttleCock Class
+//File Purpose: Handles ShuttleCock Class
 import { Sprite, Texture } from "https://cdn.jsdelivr.net/npm/pixi.js@7.2.4/dist/pixi.min.mjs";
 
 // Shuttlecock encapsulates physics and presentation for the projectile.
-// Implements: Encapsulation (private fields), Abstraction (public API),
-// Polymorphism-ready (exposes a projectile-like interface) and can be
-// extended for inheritance if needed.
+// Implements: Encapsulation (private fields), Abstraction,
 export class Shuttlecock {
     #app;
     #sprite;
@@ -21,13 +19,13 @@ export class Shuttlecock {
     constructor(app, x, y, velocity) {
         this.#app = app;
 
-        this.#sprite = new Sprite(Texture.from("assets/images/match/ShuttleCock.png"));
+        this.#sprite = new Sprite(Texture.from("assets/images/match/ShuttleCock.png")); // Load shuttlecock texture
         this.#sprite.anchor.set(0.5);
         this.#sprite.width = this.#width;
         this.#sprite.height = this.#height;
 
         this.#position = { x, y };
-        this.#velocity = { x: velocity.x ?? 0, y: velocity.y ?? 0 };
+        this.#velocity = { x: velocity.x ?? 0, y: velocity.y ?? 0 }; // Initial velocity
 
         this.#sprite.x = x;
         this.#sprite.y = y;
@@ -35,17 +33,20 @@ export class Shuttlecock {
         app.stage.addChild(this.#sprite);
     }
 
-    // --- Public API (abstraction) ---
+// Update method to handle physics and position
     update(delta, floorY) {
         if (!this.#alive) return;
 
+        // Apply physics
         this.#velocity.y += this.#gravity * delta;
         this.#velocity.x *= this.#drag;
         this.#velocity.y *= this.#drag;
 
+        // Update position
         this.#position.x += this.#velocity.x * delta;
         this.#position.y += this.#velocity.y * delta;
 
+        // Update sprite position
         this.#sprite.x = this.#position.x;
         this.#sprite.y = this.#position.y;
 
@@ -60,7 +61,7 @@ export class Shuttlecock {
         }
     }
 
-    destroy() {
+    destroy() { // Clean up the sprite from the stage
         if (this.#sprite.parent) {
             this.#sprite.parent.removeChild(this.#sprite);
         }
@@ -72,12 +73,12 @@ export class Shuttlecock {
         this.#velocity.y = -power;
     }
 
-    launchCrossCourt(direction = "right", powerX = 9, powerY = -6) {
+    launchCrossCourt(direction = "right", powerX = 9, powerY = -6) { // direction: "left" or "right"
         this.#velocity.x = direction === "right" ? powerX : -powerX;
         this.#velocity.y = powerY;
     }
 
-    hitBy(player) {
+    hitBy(player) { // player: instance of BasePlayer or object with getX(), getY(), getFacing()
         const dir = (typeof player.getFacing === 'function' ? player.getFacing() : player.facing) === "right" ? 1 : -1;
         this.#velocity.x = 7 * dir;
         this.#velocity.y = -7;
@@ -91,7 +92,7 @@ export class Shuttlecock {
         return dx < range || dy < range;
     }
 
-    // --- Accessors / Mutators ---
+// Public getter & setter Methods | Part of Abstraction
     getPosition() {
         return { x: this.#position.x, y: this.#position.y };
     }
@@ -121,7 +122,9 @@ export class Shuttlecock {
         };
     }
 
-    isAlive() { return this.#alive; }
+    isAlive() { 
+        return this.#alive; 
+    }
 
     reflectX() {
         this.#velocity.x = -this.#velocity.x;
@@ -131,7 +134,7 @@ export class Shuttlecock {
         this.#velocity.y = -this.#velocity.y;
     }
 
-    applyImpulse(dx, dy) {
+    applyImpulse(dx, dy) { // Apply an impulse to the shuttlecock's velocity
         this.#velocity.x += dx;
         this.#velocity.y += dy;
     }
@@ -145,8 +148,4 @@ export class Shuttlecock {
         this.#sprite.x = x;
         this.#sprite.y = y;
     }
-
-    // Backwards-compatible readonly shims (avoid writing to these)
-    get position() { return this.getPosition(); }
-    get alive() { return this.isAlive(); }
 }

@@ -1,4 +1,4 @@
-class Collision {
+class Collision { // Base Collision Class
     constructor(app, player1, player2,net) {
         this.app = app;
         this.player1 = player1;
@@ -6,15 +6,18 @@ class Collision {
         this.net = net
     }
 
+    // Placeholder for collision logic [Polymorphism]
     CollisionLogic() {}
 }
 
-export class WallCollision extends Collision {
+export class WallCollision extends Collision { // Wall Collision Class
     constructor(app, player1, player2,net) {
         super(app, player1, player2,net);
     }
 
-    CollisionLogic() {
+    CollisionLogic() { // Screen Boundary Collision Logic
+        
+        // Check if player loc is over the screen wallsa
         if (typeof this.player1.getX === 'function') {
             if (this.player1.getX() < 0) {
                 this.player1.setPosition(3, this.player1.getY());
@@ -33,12 +36,13 @@ export class WallCollision extends Collision {
     }
 }
 
-export class NetCollision extends Collision {
+export class NetCollision extends Collision { // Net Collision Class
     constructor(app, player1, player2,net) {
         super(app, player1, player2,net);
     }
 
-    CollisionLogic() {
+    CollisionLogic() { // Net Collision Logic
+        // Prevent players from crossing the net
         if (typeof this.player1.getX === 'function') {
             if (this.player1.getX() > this.net.x + 30) {
                 this.player1.setPosition(this.net.x + 25, this.player1.getY());
@@ -57,12 +61,12 @@ export class NetCollision extends Collision {
     }
 }
 
-export class ShuttleCollision extends Collision {
+export class ShuttleCollision extends Collision { // Shuttlecock Collision Class
     constructor(app, player1, player2,net) {
         super(app, player1, player2,net);
     }
 
-    CollisionLogic(shuttlecock,Net) {
+    CollisionLogic(shuttlecock,Net) { // Shuttlecock Collision Logic
         const pos = shuttlecock.getPosition();
         const vel = shuttlecock.getVelocity();
         const w = shuttlecock.getWidth();

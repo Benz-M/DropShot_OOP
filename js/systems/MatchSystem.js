@@ -1,16 +1,16 @@
 // Match start/end logic
-import {Texture,Sprite, Text} from 'https://cdn.jsdelivr.net/npm/pixi.js@7.2.4/dist/pixi.min.mjs';
+import {Texture,Sprite} from 'https://cdn.jsdelivr.net/npm/pixi.js@7.2.4/dist/pixi.min.mjs';
 
 
 // Handles Match ending scene when One player wins the game
 export function matchEnd(app, winnerPlayer, Player1, Player2) {
 
     // Victory Texture
-    const victoryTexture = Texture.from('assets/images/match/Matchend/victory_banner.png'); // replace with your image
+    const victoryTexture = Texture.from('assets/images/match/Matchend/victory_banner.png'); 
     const victorySprite = new Sprite(victoryTexture);
 
     // Defeat Texture
-    const DefeatTexture = Texture.from('assets/images/match/Matchend/defeat_banner.png'); // replace with your image
+    const DefeatTexture = Texture.from('assets/images/match/Matchend/defeat_banner.png'); 
     const DefeatSprite = new Sprite(DefeatTexture);
 
     // Size
@@ -23,7 +23,7 @@ export function matchEnd(app, winnerPlayer, Player1, Player2) {
 
     // Winner Text
     const imagePath = `assets/images/match/Matchend/${winnerPlayer}_Wins.png`;
-    const WinnerTexture = Texture.from(imagePath); // replace with your image
+    const WinnerTexture = Texture.from(imagePath);
     const WinnerTextureSprite = new Sprite(WinnerTexture);
 
     // Size
