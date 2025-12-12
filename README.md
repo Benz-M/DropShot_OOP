@@ -52,10 +52,28 @@
 
 ## V. 👀 Demo
 <p align="center">
-  <img src="assets/README/Demo.gif" alt="Game Demo" />
+  <img src="assets/README/Demo.gif" alt="Game Demo"/>
 </p>
 
 ## VI.🧠Installation
+Follow the steps below to install, set up, and run **DROPSHOT** on your computer.
+
+---
+
+## 📌 System Requirements
+
+Before installation, make sure your system meets the following:
+
+- **Operating System:** Windows 10 / Windows 11
+- **Code Editor:** VsCode
+- **Extension:** Go Live Extension   
+---
+## 📦 Run File
+    1. Go to and Open the folder where you downloaded the repository.  
+    2. Navigate to the DROPSHOT folder:
+    3. Click Main.js 
+    4. Click Go Live on the Bottom Right Center
+    5. Done.
 ## VII.🎬 Video Demonstration Links
 
 - [Link Directory [Click]](https://drive.google.com/drive/folders/1qSTQckSfvjhtzm9VASJmW4n6W_nIV8_-?usp=sharing)
