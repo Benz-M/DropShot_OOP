@@ -1,0 +1,114 @@
+PHP responsibilities for your game (what to implement server‑side)
+- Persisting match results / high scores (leaderboards)
+- Loading leaderboards, recent matches, or player records for display
+- Lightweight user/profile management (optional): usernames, avatars
+- Input validation + basic anti-cheat checks (server authoritative checks)
+- Rate limiting / throttling APIs to avoid spam
+- Saving/serving user-uploaded assets (avatars) or logs (if needed)
+- Simple analytics/events aggregation (counts, retention)
+
+Recommended API endpoints (minimal set)
+- `SaveRecord.php` (POST) — save a finished match or high score
+	- Request body: `{ playerName, score, matchData? }` or form fields
+	- Response: JSON `{ success: true, id: <record_id> }` or `{ success:false, error:"..." }`
+- `LoadRecords.php` (GET) — return top N scores or recent matches
+	- Query params: `?limit=10&sort=score_desc`
+	- Response: JSON array of records
+- `LoadRecordController.php` / `SaveRecordController.php` — controllers you already have; keep controllers thin and call a shared storage layer
+
+Database schema suggestions (MySQL / MariaDB)
+- `players` (optional)
+	- `id` INT PRIMARY KEY AUTO_INCREMENT
+	- `name` VARCHAR(64) UNIQUE
+	- `avatar` VARCHAR(255) NULL
+	- `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+- `match_records` (simple high-score table)
+	- `id` INT PRIMARY KEY AUTO_INCREMENT
+	- `player_id` INT NULL (or player_name VARCHAR(64))
+	- `player_name` VARCHAR(64)
+	- `score` INT
+	- `match_json` TEXT NULL -- optional serialized match details
+	- `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+Minimal secure PHP pattern (PDO, prepared statements)
+<?php
+// db.php - reusable connection
+$dsn = 'mysql:host=127.0.0.1;dbname=dropshot;charset=utf8mb4';
+$user = 'db_user';
+$pass = 'db_pass';
+$opts = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+$pdo = new PDO($dsn, $user, $pass, $opts);
+?>
+
+Example `SaveRecord.php` (simplified)
+<?php
+require 'db.php';
+header('Content-Type: application/json');
+
+$player = trim($_POST['playerName'] ?? '');
+$score = intval($_POST['score'] ?? 0);
+
+if ($player === '' || $score <= 0) {
+	echo json_encode(['success' => false, 'error' => 'Invalid input']);
+	exit;
+}
+
+// Prepared insert
+$stmt = $pdo->prepare('INSERT INTO match_records (player_name, score, match_json) VALUES (:p, :s, :m)');
+$stmt->execute([':p' => $player, ':s' => $score, ':m' => json_encode($_POST['matchData'] ?? null)]);
+$id = $pdo->lastInsertId();
+
+echo json_encode(['success' => true, 'id' => $id]);
+?>
+
+Example `LoadRecords.php` (simplified)
+<?php
+require 'db.php';
+header('Content-Type: application/json');
+
+$limit = min(100, intval($_GET['limit'] ?? 10));
+$stmt = $pdo->prepare('SELECT player_name, score, created_at FROM match_records ORDER BY score DESC, created_at ASC LIMIT :l');
+$stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+$stmt->execute();
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+echo json_encode($rows);
+?>
+
+Client-side examples (JS `fetch`)
+// Save a record
+fetch('/php/SaveRecord.php', {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+	body: new URLSearchParams({ playerName: 'Alice', score: 3 })
+})
+.then(r => r.json()).then(resp => console.log(resp));
+
+// Load leaderboard
+fetch('/php/LoadRecords.php?limit=10')
+	.then(r => r.json())
+	.then(data => { /* update HUD */ });
+
+Security and robustness notes
+- Always use prepared statements (PDO) to avoid SQL injection.
+- Validate inputs on the server (lengths, numeric ranges).
+- Consider simple anti-cheat checks: e.g., verify score vs match duration, or server-side authoritative scoring for competitive modes.
+- Add CORS headers if your front-end is served from a different origin: `header('Access-Control-Allow-Origin: https://yourdomain');` and limit allowed methods.
+- Protect endpoints from spam: rate-limit by IP or require a simple token; consider captcha for public endpoints.
+- Use HTTPS in production for confidentiality.
+
+Storage and backups
+- Use transactions for multi-step writes.
+- Rotate and backup the database regularly.
+
+Final notes / integration tips
+- You already have `php/SaveRecord.php` and `php/LoadRecords.php` in the repo — adapt them to the PDO examples above and return JSON consistently.
+- Keep controllers small: controllers validate input and call a shared `Storage` class or `db.php` helper.
+- For quick development keep PHP simple; if you scale, consider a lightweight framework (Slim, Lumen) or move to a proper API stack.
+
+If you want, I can:
+- Patch your existing `php/SaveRecord.php` and `php/LoadRecords.php` to use PDO, add JSON responses and basic validation.
+- Add example SQL (CREATE TABLE) statements for your schema.
+- Both: apply patches for PHP files and add SQL.
+
+Which would you like me to do next? (patch PHP files, generate SQL, or both)
+

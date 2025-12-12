@@ -1,0 +1,71 @@
+::-webkit-scrollbar {display: none;}
+
+@font-face {
+    font-family: "ArcadeFont";
+    src: url("/assets/fonts/BoldPixels.ttf");
+}
+
+
+Body {
+    background-color: black;
+}
+
+.Main {
+    display: flex;
+    flex-direction: column;   /* stack title and game */
+    align-items: center;      /* center everything horizontally */
+    margin-top: 20px;
+}
+.Title {
+    display: flex;
+    justify-content: center;  /* center title image */
+    width: 100%;
+}
+
+.Title_Img {
+    max-width: 20%;
+    height: auto;
+}
+
+
+
+#gameBoard {
+    display: block;           /* important: remove inline default */
+    margin: 0 auto;           /* extra safety: centers block element */
+    width: 500px;             /* canvas width */
+    height: 500px;  
+    border-radius: 20px;  
+    border:  3px solid black;        /* canvas height */
+}
+
+.imgCont img {
+    position: absolute;
+}
+
+.img1 {
+    right:  250px;
+    width: 80px;
+}
+
+.img2 {
+    bottom: 355px;
+    right:  250px;
+    width: 77px;
+}
+.img3 {
+    bottom: 266px;
+    right:  249px;
+    width: 83px;
+}
+
+.img4 {
+    bottom: 180px;
+    right:  249px;
+    width: 83px;
+}
+
+.img5 {
+    top: 100px;
+    right: 50px;
+    height: 50px;
+}
